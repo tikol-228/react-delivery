@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================= */
+/* BASE THEME (LIGHT) */
+/* ============================= */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 235 18% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 235 18% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 235 18% 14%;
+
+    --primary: 14 78% 66%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 235 18% 14%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 228 10% 40%;
+
+    --accent: 14 78% 66%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 90%;
+    --input: 220 13% 90%;
+    --ring: 14 78% 66%;
+
+    --radius: 0.75rem;
+  }
+
+  /* ============================= */
+  /* DARK THEME */
+  /* ============================= */
+  .dark {
+    --background: 235 18% 14%;
+    --foreground: 0 0% 100%;
+
+    --card: 230 14% 20%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 230 14% 20%;
+    --popover-foreground: 0 0% 100%;
+
+    --secondary: 230 14% 25%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 230 10% 30%;
+    --muted-foreground: 228 10% 55%;
+
+    --border: 230 12% 26%;
+    --input: 230 12% 26%;
+
+    /* custom tokens */
+    --sidebar-background: 235 18% 11%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 14 78% 66%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 230 14% 20%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 230 12% 26%;
+    --sidebar-ring: 14 78% 66%;
+
+    --pos-dark: 235 18% 11%;
+    --pos-card-hover: 230 14% 24%;
+    --pos-text-secondary: 228 10% 55%;
+    --pos-badge: 230 14% 25%;
+    --pos-green: 142 70% 49%;
+    --pos-order-bg: 230 14% 18%;
+  }
+}
+
+/* ============================= */
+/* GLOBAL BASE */
+/* ============================= */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-barlow;
+  }
+}
+
+/* tells browser about dark UI */
+.dark {
+  color-scheme: dark;
+}
