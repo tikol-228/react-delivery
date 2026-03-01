@@ -123,3 +123,28 @@ Short overview of each part (matches the comments in the code).
 | **utils/dto.js** | DTO: returns only safe fields (id, email); never sends password to client. |
 
 Request flow: **Route → Controller → Service → Repository → DB** (then back with DTO).
+
+---
+
+## Frontend integration
+
+This server can now serve the React application and expose its API from the same host/port. After building the client, static files are located at `../react-delivery/dist` (relative to the `server` folder) and Express will serve them automatically when `NODE_ENV=production`.
+
+Scripts in this package help build and start everything together:
+
+```bash
+# from server directory
+npm run build:client      # compile React into ../react-delivery/dist
+npm run start             # start Express on port 3001, serving both API and frontend
+```
+
+During local development you can run the frontend and backend separately. The Vite config already proxies `/user` and `/orders` paths to `http://localhost:3001`, and CORS is enabled on the server.
+
+```bash
+# frontend
+cd ../react-delivery && npm install && npm run dev
+# backend (in another terminal)
+cd server && npm install && npm run dev
+```
+
+Now the React app can make requests like `fetch('/user')` without worrying about cross‑origin problems.

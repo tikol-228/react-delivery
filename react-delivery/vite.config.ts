@@ -8,6 +8,17 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      // during development, forward API calls to the backend
+      "/user": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
+      "/orders": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
+    },
     hmr: {
       overlay: false,
     },

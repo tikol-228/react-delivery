@@ -1,13 +1,11 @@
-import { userService } from "../services/user.service.js";
 import { orderService } from "../services/order.service.js";
 
 export const orderController = {
-  createUser: (req, res, next) => {
+  createOrder: (req, res, next) => {
     try {
-      const result = userService.createUser(req.body);
+      const result = orderService.createOrder(req.body);
       res.status(201).json(result);
     } catch (e) {
-      console.log(111, e);
       next(e);
     }
   },
@@ -21,27 +19,27 @@ export const orderController = {
     }
   },
 
-  getUser: (req, res, next) => {
+  getOrder: (req, res, next) => {
     try {
-      const result = userService.getUser(req.params.id);
+      const result = orderService.getOrder(req.params.id);
       res.json(result);
     } catch (e) {
       next(e);
     }
   },
 
-  updateUser: (req, res, next) => {
+  updateOrder: (req, res, next) => {
     try {
-      const result = userService.updateUser(req.params.id, req.body);
+      const result = orderService.updateOrder(req.params.id, req.body);
       res.json(result);
     } catch (e) {
       next(e);
     }
   },
 
-  deleteUser: (req, res, next) => {
+  deleteOrder: (req, res, next) => {
     try {
-      userService.deleteUser(req.params.id);
+      orderService.deleteOrder(req.params.id);
       res.status(204).send();
     } catch (e) {
       next(e);

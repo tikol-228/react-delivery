@@ -8,3 +8,8 @@ export function toOrderDto(order) {
   if (!order) return null;
   return { id: order.id, name: order.name, price: order.price };
 }
+
+export function toUserDto(user) {
+  if (!user) return null;
+  return { id: user.id, email: user.email };
+}

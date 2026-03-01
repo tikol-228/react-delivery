@@ -5,10 +5,13 @@
   "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "start": "NODE_ENV=production node src/app.js",
+    "dev": "nodemon src/app.js",
+    "build:client": "cd ../react-delivery && npm run build",
+    "start:all": "npm run build:client && npm run start"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.21.0"
   },
   "devDependencies": {

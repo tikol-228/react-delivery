@@ -1,3 +1,1 @@
-# delivery-app
-# react-delivery
-# react-delivery
+# delivery app

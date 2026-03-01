@@ -1,6 +1,6 @@
 import { orderRepository } from "../repositories/order.repository.js";
 import { hash } from "../utils/hash.js";
-import { orderToDo } from "../utils/dto.js";
+import { toOrderDto } from "../utils/dto.js";
 
 // Helper: throw if value is missing (used for validation)
 function require(value, message) {
@@ -20,21 +20,21 @@ export const orderService = {
       username: data.username,
       price: data.price
     });
-    return orderToDo(order);
+    return toOrderDto(order);
   },
 
   getAllOrders() {
     const orders = orderRepository.findAll();
-    return orders.map(orderToDo);
+    return orders.map(toOrderDto);
   },
 
   getOrder(id) {
     const order = orderRepository.findById(id);
     if (!order) throw new Error("order not found");
-    return orderToDo(order);
+    return toOrderDto(order);
   },
 
-  updateorder(id, data) {
+  updateOrder(id, data) {
     const order = orderRepository.findById(id);
     if (!order) throw new Error("order not found");
 
@@ -48,10 +48,10 @@ export const orderService = {
     if (update.password) update.password = hash(update.password);
 
     const updated = orderRepository.update(id, update);
-    return orderToDo(updated);
+    return toOrderDto(updated);
   },
 
-  deleteorder(id) {
+  deleteOrder(id) {
     const order = orderRepository.findById(id);
     if (!order) throw new Error("order not found");
     orderRepository.delete(id);
