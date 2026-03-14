@@ -4,6 +4,7 @@ export const orderController = {
   createOrder: (req, res, next) => {
     try {
       const result = orderService.createOrder(req.body);
+      console.log("New order created:", result);
       res.status(201).json(result);
     } catch (e) {
       next(e);

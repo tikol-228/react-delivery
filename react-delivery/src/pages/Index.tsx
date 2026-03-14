@@ -1,12 +1,13 @@
 import { useState, useCallback } from "react";
-import Sidebar from "@/components/Sidebar";
 import MenuContent from "@/components/MenuContent";
-import OrderPanel from "@/components/OrderPanel";
+import OrderPanel, { OrderType } from "@/components/OrderPanel";
 import { MenuItem, OrderItem } from "@/data/menuData";
+import { createOrder } from "@/lib/orderApi";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("home");
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [orderType, setOrderType] = useState<OrderType>("Dine In");
 
   const handleAddItem = useCallback((item: MenuItem) => {
     setOrderItems((prev) => {
@@ -32,11 +33,32 @@ const Index = () => {
     setOrderItems((prev) => prev.filter((o) => o.id !== id));
   }, []);
 
+  const handleCheckout = useCallback(async () => {
+    if (orderItems.length === 0) {
+      toast({ title: "No items", description: "Add some items before checking out.", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const order = await createOrder({ items: orderItems, type: orderType });
+      toast({ title: "Order placed", description: `Order #${order.id} created successfully.` });
+      setOrderItems([]);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to place order", variant: "destructive" });
+    }
+  }, [orderItems, orderType]);
+
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+    <div className="flex flex-1">
       <MenuContent onAddItem={handleAddItem} />
-      <OrderPanel items={orderItems} onUpdateQty={handleUpdateQty} onRemove={handleRemove} />
+      <OrderPanel
+        items={orderItems}
+        onUpdateQty={handleUpdateQty}
+        onRemove={handleRemove}
+        orderType={orderType}
+        onTypeChange={setOrderType}
+        onCheckout={handleCheckout}
+      />
     </div>
   );
 };

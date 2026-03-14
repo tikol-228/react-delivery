@@ -12,6 +12,7 @@ import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   { id: "home", icon: Home, path: "/" },
+  { id: "orders", icon: ShoppingBag, path: "/orders" },
   { id: "grid", icon: LayoutGrid, path: "/grid" },
   { id: "cart", icon: ShoppingBag, path: "/cart" },
   { id: "favorites", icon: Heart, path: "/favorites" },
@@ -29,7 +30,7 @@ export default function Sidebar() {
         {/* Logo */}
         <div className="w-11 h-11 rounded-lg bg-primary flex items-center justify-center mb-4">
           <span className="text-primary-foreground font-bold text-lg">
-            JP
+            <Link to="/profile">JP</Link>
           </span>
         </div>
 

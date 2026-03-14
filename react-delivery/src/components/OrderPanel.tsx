@@ -2,17 +2,25 @@ import { useState } from "react";
 import { Minus, Plus, X } from "lucide-react";
 import { OrderItem } from "@/data/menuData";
 
+export type OrderType = "Dine In" | "To Go" | "Delivery";
+
 interface OrderPanelProps {
   items: OrderItem[];
   onUpdateQty: (id: number, delta: number) => void;
   onRemove: (id: number) => void;
+  orderType: OrderType;
+  onTypeChange: (type: OrderType) => void;
+  onCheckout?: () => void;
 }
 
-type OrderType = "Dine In" | "To Go" | "Delivery";
-
-const OrderPanel = ({ items, onUpdateQty, onRemove }: OrderPanelProps) => {
-  const [orderType, setOrderType] = useState<OrderType>("Dine In");
-
+const OrderPanel = ({
+  items,
+  onUpdateQty,
+  onRemove,
+  orderType,
+  onTypeChange,
+  onCheckout,
+}: OrderPanelProps) => {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = 0;
   const total = subtotal - discount;
@@ -28,7 +36,7 @@ const OrderPanel = ({ items, onUpdateQty, onRemove }: OrderPanelProps) => {
           {(["Dine In", "To Go", "Delivery"] as OrderType[]).map((type) => (
             <button
               key={type}
-              onClick={() => setOrderType(type)}
+              onClick={() => onTypeChange(type)}
               className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
                 orderType === type
                   ? "bg-primary text-primary-foreground"
@@ -108,7 +116,10 @@ const OrderPanel = ({ items, onUpdateQty, onRemove }: OrderPanelProps) => {
           <span className="text-muted-foreground">Sub total</span>
           <span className="text-foreground font-medium">$ {subtotal.toFixed(2)}</span>
         </div>
-        <button className="w-full h-12 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">
+        <button
+          onClick={onCheckout}
+          className="w-full h-12 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity"
+        >
           Continue to Payment
         </button>
       </div>

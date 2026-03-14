@@ -1,5 +1,4 @@
 import { orderRepository } from "../repositories/order.repository.js";
-import { hash } from "../utils/hash.js";
 import { toOrderDto } from "../utils/dto.js";
 
 // Helper: throw if value is missing (used for validation)
@@ -7,19 +6,28 @@ function require(value, message) {
   if (!value) throw new Error(message);
 }
 
+// compute totals from items
+function computeTotals(items) {
+  const subtotal = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+  const total = subtotal; // could adjust for tax/discounts later
+  return { subtotal, total };
+}
+
 export const orderService = {
   createOrder(data) {
-    require(data?.email, "Email required");
-    require(data?.password, "Password required");
+    require(data?.items && Array.isArray(data.items) && data.items.length > 0, "Order items required");
+    require(data?.type, "Order type required");
 
-    const existing = orderRepository.findByEmail(data.email);
-    if (existing) throw new Error("order already exists");
+    const { subtotal, total } = computeTotals(data.items);
 
     const order = orderRepository.create({
-      name: data.email,
-      username: data.username,
-      price: data.price
+      items: data.items,
+      type: data.type,
+      subtotal,
+      total,
+      status: "pending"
     });
+
     return toOrderDto(order);
   },
 
@@ -38,14 +46,13 @@ export const orderService = {
     const order = orderRepository.findById(id);
     if (!order) throw new Error("order not found");
 
-    if (data.name !== undefined) {
-      require(data.name, "name required");
-      const existing = orderRepository.findByEmail(data.name);
-      if (existing && existing.id !== order.id) throw new Error("Email already taken");
-    }
-
     const update = { ...data };
-    if (update.password) update.password = hash(update.password);
+    // if items provided, recalc totals
+    if (update.items) {
+      const { subtotal, total } = computeTotals(update.items);
+      update.subtotal = subtotal;
+      update.total = total;
+    }
 
     const updated = orderRepository.update(id, update);
     return toOrderDto(updated);

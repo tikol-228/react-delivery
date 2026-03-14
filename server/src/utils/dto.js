@@ -6,7 +6,9 @@
 
 export function toOrderDto(order) {
   if (!order) return null;
-  return { id: order.id, name: order.name, price: order.price };
+  // return the full order except any internal fields
+  const { id, items, type, subtotal, total, status, createdAt } = order;
+  return { id, items, type, subtotal, total, status, createdAt };
 }
 
 export function toUserDto(user) {

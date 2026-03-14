@@ -34,7 +34,15 @@ export function ThemeProvider({ children }: Props) {
   // --- sync theme ---
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, theme);
-    document.documentElement.dataset.theme = theme;
+
+    // Tailwind is configured with darkMode: ["class"], so we toggle the
+    // "dark" class on the root element rather than using a data-* attribute.
+    const root = document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
   }, [theme]);
 
   return (

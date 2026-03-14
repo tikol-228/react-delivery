@@ -10,6 +10,7 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import { userRoutes } from "./routes/user.routes.js";
 import { orderRoutes } from "./routes/order.routes.js";
+import { menuRoutes } from "./routes/menu.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,24 +22,26 @@ app.use(cors());
 // Parse JSON body (e.g. req.body in POST/PUT)
 app.use(express.json());
 
-// if a production build of the React app exists, serve it from Express
+// if a build of the React app exists, serve it from Express
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const staticPath = path.join(__dirname, "../../react-delivery/dist");
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(staticPath));
-}
+// Express will gracefully ignore requests when the directory doesn't exist,
+// so we can mount static middleware unconditionally.  This allows the same
+// server command to work in both dev and production once the client has been
+// built (see "build:client" script).  In dev use the "start:all" helper
+// which builds the client before launching the server.
+app.use(express.static(staticPath));
 
 // All user endpoints live under /user, /user/:id
 app.use("/user", userRoutes);
 app.use("/orders", orderRoutes);
+app.use("/menu", menuRoutes);
 
 // fallback to index.html for any other route when serving static files
-if (process.env.NODE_ENV === "production") {
-  app.get("*", (_req, res) => {
-    res.sendFile(path.join(staticPath, "index.html"));
-  });
-}
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(staticPath, "index.html"));
+});
 
 // Global error handler: catches errors passed to next(err) from any controller
 app.use((err, _req, res, _next) => {

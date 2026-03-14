@@ -4,30 +4,43 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./providers/ThemeProvider";
-
+import { FavoritesProvider } from "./context/FavoritesContext";
 import Index from "./pages/Index";
+import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
+import Favorites from "./components/Favorites";
+import Chat from "./components/Chat";
+import MainLayout from "./components/MainLayout";
+import Profile from "./components/Profile";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <ThemeProvider>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+    <FavoritesProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
 
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<MainLayout />}>
+                <Route path="/" element={<Index />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/favorites" element={<Favorites/>}/>
+                <Route path="/settings" element={<Settings/>}/>
+                <Route path="/messages" element={<Chat/>}/>
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
 
-      </TooltipProvider>
-    </QueryClientProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </FavoritesProvider>
   </ThemeProvider>
 );
 

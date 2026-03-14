@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import FoodCard from "./FoodCard";
-import { menuItems, categories, MenuItem } from "@/data/menuData";
+import { categories, MenuItem } from "@/data/menuData";
+import { fetchMenu } from "@/lib/orderApi";
+import { toast } from "@/hooks/use-toast";
 
 interface MenuContentProps {
   onAddItem: (item: MenuItem) => void;
@@ -10,6 +12,22 @@ interface MenuContentProps {
 const MenuContent = ({ onAddItem }: MenuContentProps) => {
   const [activeCategory, setActiveCategory] = useState("Hot Dishes");
   const [search, setSearch] = useState("");
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadMenu = async () => {
+      try {
+        const data = await fetchMenu();
+        setMenuItems(data);
+      } catch (err: any) {
+        toast({ title: "Error", description: "Could not load menu from server. Using local data.", variant: "destructive" });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadMenu();
+  }, []);
 
   const filteredItems = menuItems.filter(
     (item) =>
@@ -17,13 +35,20 @@ const MenuContent = ({ onAddItem }: MenuContentProps) => {
       item.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const date = (() => {
+    const today = new Date();
+    const options: Intl.DateTimeFormatOptions = { weekday: "long", month: "long", day: "numeric" };
+    const formattedDate = today.toLocaleDateString("en-US", options);
+    const [day, currentDate] = formattedDate.split(", ");
+    return { day, currentDate };
+  })();
+
   return (
     <div className="flex-1 flex flex-col p-6 overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-[28px] font-bold text-foreground">Jaegar Resto</h1>
-          <p className="text-sm text-muted-foreground mt-1">Tuesday, 2 Feb 2021</p>
+          <p className="text-sm text-muted-foreground mt-1">{date.day}, {date.currentDate}</p>
         </div>
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
@@ -60,11 +85,17 @@ const MenuContent = ({ onAddItem }: MenuContentProps) => {
       </div>
 
       {/* Food Grid */}
-      <div className="grid grid-cols-3 gap-x-6 gap-y-14 overflow-y-auto pb-8 pt-10">
-        {filteredItems.map((item) => (
-          <FoodCard key={item.id} item={item} onAdd={onAddItem} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-muted-foreground">Loading menu...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-x-6 gap-y-14 overflow-y-auto pb-8 pt-10">
+          {filteredItems.map((item) => (
+            <FoodCard key={item.id} item={item} onAdd={onAddItem} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
