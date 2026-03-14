@@ -6,11 +6,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import AddAddressModal, { Address } from "../modals/AddAddressModal";
 
 const Profile = () => {
+  const [verified, useVerified] = useState(false);
+  const [isBtn, useIsBtn] = useState(false);
+  const [orders, useOrders] = useState(0);
+  const [addresses, setAddresses] = useState<Address[]>([
+    {
+      id: "1",
+      label: "Home",
+      street: "Nezavisimosti Ave 35",
+      city: "Minsk",
+      postalCode: "220000",
+      country: "Belarus",
+    },
+    {
+      id: "2",
+      label: "Office",
+      street: "Pobediteley Ave 7A",
+      city: "Minsk",
+      postalCode: "220000",
+      country: "Belarus",
+    },
+  ]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddAddress = () => {
-      
+    setIsModalOpen(true);
+  };
+
+  const handleSaveAddress = (newAddress: Omit<Address, "id">) => {
+    const address: Address = {
+      id: Date.now().toString(),
+      ...newAddress,
+    };
+    setAddresses([...addresses, address]);
+    setIsModalOpen(false);
   };
 
   return (
@@ -44,7 +78,7 @@ const Profile = () => {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Button variant="secondary" className="gap-2 bg-primary-foreground text-foreground hover:bg-primary-foreground/90">
+              <Button variant="secondary" className="gap-2  text-foreground hover:bg-black">
                 <Camera className="h-4 w-4" />
                 Change photo
               </Button>
@@ -109,7 +143,7 @@ const Profile = () => {
 
               <div className="rounded-lg border bg-secondary/40 p-4">
                 <p className="text-sm text-muted-foreground">Saved addresses</p>
-                <p className="mt-2 text-2xl font-bold">3</p>
+                <p className="mt-2 text-2xl font-bold">{addresses.length}</p>
               </div>
 
               <div className="rounded-lg border bg-secondary/40 p-4">
@@ -130,14 +164,14 @@ const Profile = () => {
               <CardDescription>Prepare UI for managing multiple addresses.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="rounded-lg border p-4">
-                <p className="font-medium">Home</p>
-                <p className="text-sm text-muted-foreground">Nezavisimosti Ave 35, Minsk</p>
-              </div>
-              <div className="rounded-lg border p-4">
-                <p className="font-medium">Office</p>
-                <p className="text-sm text-muted-foreground">Pobediteley Ave 7A, Minsk</p>
-              </div>
+              {addresses.map((address) => (
+                <div key={address.id} className="rounded-lg border p-4">
+                  <p className="font-medium">{address.label}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {address.street}, {address.city}
+                  </p>
+                </div>
+              ))}
               <Button variant="outline" className="w-full" onClick={handleAddAddress}>
                 Add new address
               </Button>
@@ -193,6 +227,12 @@ const Profile = () => {
           <Button>Save changes</Button>
         </div>
       </div>
+
+      <AddAddressModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveAddress}
+      />
     </div>
   );
 };

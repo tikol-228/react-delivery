@@ -1,5 +1,8 @@
 import { useTheme } from "../hooks/use-theme";
 import db from "../../../server/db.json";
+import Profile from "./Profile";
+import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 
 export default function Settings() {
@@ -38,6 +41,11 @@ export default function Settings() {
       <div className="">
         <h3>Сheckout your average bill</h3>
         <p>{payment()}</p>
+      </div>
+
+      <div>
+          <h3>Edit Profile</h3>
+          <Button><Link to={'/profile'}>edit</Link></Button>
       </div>
     </section>
     </>
